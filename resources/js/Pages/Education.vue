@@ -158,9 +158,9 @@ export default {
           institution: '',
           address: '',
           yearOfGraduation: '',
-          basicEducation: '', // Initialize new field
-          highestLevel: '',   // Initialize new field
-          honors: ''          // Initialize new field
+          basicEducation: '', 
+          highestLevel: '',   
+          honors: ''          
         };
       }
     },

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PersonalInfo; // Assuming you have a model named PersonalInfo
+use App\Models\PersonalInfo;
+use Illuminate\Support\Facades\Auth;
 
 class PersonalInfoController extends Controller
 {
@@ -16,6 +17,7 @@ class PersonalInfoController extends Controller
     public function store(Request $request)
     {
         // Validate the request data
+        dd(Auth::user());
         $request->validate([
             'surname' => 'required|string|max:100',
             'firstname' => 'required|string|max:100',
@@ -33,9 +35,11 @@ class PersonalInfoController extends Controller
             'civilStatus' => 'required|in:Single,Married,Widowed,Separated,Divorced',
             'email' => 'required|email|max:255',
         ]);
-
+        
+        
         // Create a new PersonalInfo record
         $personalInfo = new PersonalInfo($request->all());
+        $personalInfo->stud_Id = Auth::user()->username; // Set the foreign key
         $personalInfo->save();
 
         return response()->json(['message' => 'Form data saved successfully!'], 200);

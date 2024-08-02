@@ -14,9 +14,7 @@ class AddressInfo extends Migration
     public function up()
     {
         Schema::create('address_info', function (Blueprint $table) {
-            $table->id();
-            $table->string('stud_Id'); // Student ID (username from students table)
-            $table->foreign('stud_Id')->references('username')->on('students')->cascadeOnDelete();
+            $table->id()->primary();
             $table->boolean('address_type');
             $table->string('country')->nullable();
             $table->string('province')->nullable();

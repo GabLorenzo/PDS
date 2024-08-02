@@ -37,7 +37,7 @@ export default {
         console.log(response.data)
         // Handle successful login, e.g., store token and redirect
         if(response.data===1) {
-          window.location.reload();
+        //  window.location.reload();
           this.$router.push("/basic");
         }else {
           alert("incorrect username or password")

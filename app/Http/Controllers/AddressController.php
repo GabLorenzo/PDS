@@ -29,24 +29,42 @@ class AddressController extends Controller
         // // Create a new AddressInfo record
         // $addressInfo = Address::create($validatedData);
 
-        $address = new Address();
-        $address->address_type = $request->addressType;
-        $address->country = $request->country;
-        $address->province = $request->province;
-        $address->city = $request->city;
-        $address->barangay = $request->barangay;
-        $address->house_number = $request->houseNumber;
-        $address->zip_code = $request->zipCode;
-        $address->temp_country = $request->tempCountry;
-        $address->temp_province = $request->tempProvince;
-        $address->temp_city = $request->tempCity;
-        $address->temp_barangay = $request->tempBarangay;
-        $address->temp_house_number = $request->tempHouseNumber;
-        $address->temp_zip_code = $request->tempZipCode;
-        $address->save();
-
-
-        // Return a response indicating success
-        return response()->json(['message' => 'Address information saved successfully!', 'data' => $address], 201);
+        $request->validate([
+            'address_type' => 'required|boolean',
+            'country' => 'nullable|string',
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+            'barangay' => 'nullable|string',
+            'house_number' => 'nullable|string',
+            'zip_code' => 'nullable|string',
+            'temp_country' => 'nullable|string',
+            'temp_province' => 'nullable|string',
+            'temp_city' => 'nullable|string',
+            'temp_barangay' => 'nullable|string',
+            'temp_house_number' => 'nullable|string',
+            'temp_zip_code' => 'nullable|string',
+        ]);
+    
+        // Use authenticated user's username as stud_Id
+        $studId = auth()->user()->username;
+    
+        AddressInfo::create([
+            'stud_Id' => $studId,
+            'address_type' => $request->address_type,
+            'country' => $request->country,
+            'province' => $request->province,
+            'city' => $request->city,
+            'barangay' => $request->barangay,
+            'house_number' => $request->house_number,
+            'zip_code' => $request->zip_code,
+            'temp_country' => $request->temp_country,
+            'temp_province' => $request->temp_province,
+            'temp_city' => $request->temp_city,
+            'temp_barangay' => $request->temp_barangay,
+            'temp_house_number' => $request->temp_house_number,
+            'temp_zip_code' => $request->temp_zip_code,
+        ]);
+    
+        return response()->json(['message' => 'Address info saved successfully']);
     }
 }

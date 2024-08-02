@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PersonalInfo extends Model
 {
-    use HasFactory;
-
     protected $table = 'personal_info';
 
     protected $fillable = [
+        
         'surname',
         'firstname',
         'middlename',
@@ -27,5 +25,12 @@ class PersonalInfo extends Model
         'bloodType',
         'civilStatus',
         'email',
+        'stud_Id'
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'stud_Id', 'username');
+    }
 }
+    

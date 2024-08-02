@@ -12,9 +12,9 @@ class LoginPage extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->string('username')->primary(); // Username as primary key
-            $table->string('password'); // Password field
-            // $table->timestamps(); // Uncomment if you want timestamps
+            $table->id(); // Primary key
+            $table->string('username');
+            $table->string('password'); 
             $table->string('token')->nullable();
         });
     }

@@ -23,10 +23,7 @@ class LogController extends Controller
          if(Student::where('username', $credentials['username'])->exists()){
              $user = Student::where('username', $credentials['username'])->first();
              if(Hash::check($credentials['password'], $user->password) && $user->username===$credentials['username']){
-                 Auth::login($user);
-                 return 1;
-             }else{
-                 return 0;
+                Auth::login($user);
              }
          }else{
              return 0;

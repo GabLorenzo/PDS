@@ -369,3 +369,13 @@ input[type="file"] {
   }
 }
 </style>
+
+
+<!--async fetchLoggedStudent_id () {
+      try {
+      const response = await axios.get("/get-student-id");
+      return response.data.student_id;
+      }catch (error) {
+      console.error("Error getting logged-in Student ID", error);
+      throw error;}
+  },-->

@@ -13,7 +13,7 @@ class PersonalInfo extends Migration
     {
         Schema::create('personal_info', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->string('stud_Id'); // Foreign key to students table
+        
             $table->string('surname', 100);
             $table->string('firstname', 100);
             $table->string('middlename', 100)->nullable();
@@ -32,7 +32,7 @@ class PersonalInfo extends Migration
             $table->timestamps(); // Created at & Updated at
 
             // Setting up the foreign key constraint
-            $table->foreign('stud_Id')->references('username')->on('students')->cascadeOnDelete();
+           
         });
     }
 

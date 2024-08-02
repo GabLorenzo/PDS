@@ -199,11 +199,11 @@ export default {
       return false; // Invalid addressType
     },
     saveForm() {
-      axios.post('/address-info', this.formData) // Ensure correct endpoint
+      axios.post('/address-info', this.formData)
         .then(response => {
           this.warningMessage = 'Form data saved successfully!';
           this.formSubmitted = true;
-          this.goTo('/family'); // Update route as necessary
+          this.goTo('/family');
         })
         .catch(error => {
           console.error('Error saving form data:', error);
