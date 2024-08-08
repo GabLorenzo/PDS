@@ -2,59 +2,45 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $table = 'students';
-    protected $fillable = [
-        'username',
-        'password',
-    ];
+    protected $primaryKey = 'username';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $fillable = ['username', 'password'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $hidden = ['password'];
+
+    public function personalInfo(): HasOne
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasOne(PersonalInfo::class, 'username', 'username');
     }
 
-    public function generateToken()
+    public function addresses()
     {
-        $token = Str::random(60);
-        $this->token = hash('sha256', $token);
-        $this->save();
-        return $token;
+        return $this->hasMany(Address::class, 'user_id', 'username');
     }
-
-    public function validateToken($token)
+    public function family()
     {
-        return $this->token === hash('sha256', $token);
+        return $this->hasMany(Family::class, 'user_id', 'username');
+    }
+    public function educationBackgrounds(): HasMany
+    {
+        return $this->hasMany(EducationBackground::class, 'user_id', 'username');
+    }
+    public function workExperiences(): HasMany
+    {
+        return $this->hasMany(WorkExperience::class, 'username', 'username');
+    }
+    public function awards(): HasMany
+    {
+        return $this->hasMany(Award::class, 'username', 'username');
     }
 }

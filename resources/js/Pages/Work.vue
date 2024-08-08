@@ -1,346 +1,390 @@
 <template>
-  <div class="main-container">
-    <!-- Basic Form -->
-    <div class="basic-form">
-      <h2>Work Background</h2>
-      <button class="add-work-button" @click="showForm = !showForm">Add Work Experience</button>
-
-      <!-- Form Popup (inside the basic-form) -->
-      <div v-if="showForm" class="form-popup">
-        <h2>Work Information</h2>
-        <form @submit.prevent="submitForm">
-          <!-- Form fields -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="address">Address:</label>
-              <input type="text" id="address" v-model="formData.address">
-            </div>
-            <div class="form-group">
-              <label for="contact">Tel./CP no.:</label>
-              <input type="text" id="contact" v-model="formData.contact">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="inclusive-dates">Inclusive Dates (from - to):</label>
-              <input type="text" id="inclusive-dates" v-model="formData.inclusiveDates">
-            </div>
-            <div class="form-group">
-              <label for="position-title">Position Title:</label>
-              <input type="text" id="position-title" v-model="formData.positionTitle">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="department">Department/Agency:</label>
-              <input type="text" id="department" v-model="formData.department">
-            </div>
-            <div class="form-group">
-              <label for="monthly-salary">Monthly Salary:</label>
-              <input type="number" id="monthly-salary" v-model="formData.monthlySalary">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="salary-grade">Salary/Job/Pay Grade:</label>
-              <input type="text" id="salary-grade" v-model="formData.salaryGrade">
-            </div>
-            <div class="form-group">
-              <label for="appointment-status">Status of Appointment:</label>
-              <input type="text" id="appointment-status" v-model="formData.appointmentStatus">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="govt-service">Gov't Service (Y/N):</label>
-              <select id="govt-service" v-model="formData.govtService">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Warning Message -->
-          <div v-if="warningMessage" class="warning-message">
-            {{ warningMessage }}
-          </div>
-
-          <div class="form-row button-row">
-            <button type="submit">Submit</button>
-            <button type="button" @click="closeForm">Close</button>
-          </div>
-        </form>
+    <div class="main-container">
+      <div class="degree-selection">
+        <div class="title-section">
+          <h1>Work Experience Information</h1>
+        </div>
+        <button @click="showOverlay" class="add-button">Add Work Experience</button>
       </div>
 
-      <!-- Buttons inside basic-form -->
-      <div class="button-row">
-        <router-link to="/education">
-          <button>Previous</button>
-        </router-link>
-        <router-link to="/achievement">
-          <button>Next</button>
-        </router-link>
-      </div>
-    </div>
-
-    <!-- Submission Details -->
-    <div v-if="formSubmitted" class="results-section">
-      <div class="submitted-message">
-        <div class="work-background">
-          <div v-for="(work, index) in workBackground" :key="index" class="work-entry">
-            <p>Address: {{ work.address }}</p>
-            <p>Tel./CP no.: {{ work.contact }}</p>
-            <p>Inclusive Dates: {{ work.inclusiveDates }}</p>
-            <p>Position Title: {{ work.positionTitle }}</p>
-            <p>Department/Agency: {{ work.department }}</p>
-            <p>Monthly Salary: {{ work.monthlySalary }}</p>
-            <p>Salary/Job/Pay Grade: {{ work.salaryGrade }}</p>
-            <p>Status of Appointment: {{ work.appointmentStatus }}</p>
-            <p>Gov't Service: {{ work.govtService }}</p>
-            <button class="remove-button" @click="removeWork(index)">Remove</button>
-          </div>
+      <!-- Form Overlay -->
+      <div v-if="showForm" class="form-overlay">
+        <div class="form-popup">
+          <h2>Add Work Experience</h2>
+          <form @submit.prevent="submitForm" class="work-experience-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" v-model="formData.address">
+              </div>
+              <div class="form-group">
+                <label for="contact">Contact:</label>
+                <input type="text" id="contact" v-model="formData.contact">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inclusive_dates">Inclusive Dates:</label>
+                <input type="text" id="inclusive_dates" v-model="formData.inclusive_dates">
+              </div>
+              <div class="form-group">
+                <label for="position_title">Position Title:</label>
+                <input type="text" id="position_title" v-model="formData.position_title">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="department">Department:</label>
+                <input type="text" id="department" v-model="formData.department">
+              </div>
+              <div class="form-group">
+                <label for="monthly_salary">Monthly Salary:</label>
+                <input type="number" id="monthly_salary" v-model="formData.monthly_salary">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="salary_grade">Salary Grade:</label>
+                <input type="text" id="salary_grade" v-model="formData.salary_grade">
+              </div>
+              <div class="form-group">
+                <label for="appointment_status">Appointment Status:</label>
+                <input type="text" id="appointment_status" v-model="formData.appointment_status">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="govt_service">Govt Service:</label>
+                <select id="govt_service" v-model="formData.govt_service">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+            <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
+            <div class="form-actions">
+              <button type="submit" class="submit-button" :disabled="isSubmitting">Save</button>
+              <button type="button" class="close-button" @click="closeForm">Close</button>
+            </div>
+          </form>
         </div>
       </div>
+
+      <!-- Results Section -->
+      <div v-if="filteredWorkExperienceEntries.length" class="results-section">
+        <table>
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Contact</th>
+              <th>Inclusive Dates</th>
+              <th>Position Title</th>
+              <th>Department</th>
+              <th>Monthly Salary</th>
+              <th>Salary Grade</th>
+              <th>Appointment Status</th>
+              <th>Govt Service</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(entry, index) in filteredWorkExperienceEntries" :key="index">
+              <td>{{ entry.address }}</td>
+              <td>{{ entry.contact }}</td>
+              <td>{{ entry.inclusive_dates }}</td>
+              <td>{{ entry.position_title }}</td>
+              <td>{{ entry.department }}</td>
+              <td>{{ entry.monthly_salary }}</td>
+              <td>{{ entry.salary_grade }}</td>
+              <td>{{ entry.appointment_status }}</td>
+              <td>{{ entry.govt_service }}</td>
+              <td><button class="remove-button" @click="removeEntry(index)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</template>
+  </template>
 
+  <script>
+  import axios from 'axios';
 
-<script>
-export default {
-  data() {
-    return {
-      formData: {
-        address: '',
-        contact: '',
-        inclusiveDates: '',
-        positionTitle: '',
-        department: '',
-        monthlySalary: '',
-        salaryGrade: '',
-        appointmentStatus: '',
-        govtService: ''
-      },
-      showForm: false,
-      formSubmitted: false,
-      warningMessage: '',
-      workBackground: []
-    };
-  },
-  methods: {
-    submitForm() {
-      if (this.isFormValid()) {
-        this.workBackground.push({ ...this.formData });
-        console.log('Form submitted:', this.formData);
-        this.formSubmitted = true;
-        this.showForm = false;
-        this.resetForm();
-        this.warningMessage = ''; // Clear warning message on successful submission
-      } else {
-        this.warningMessage = 'Please fill in all required fields.';
-      }
-    },
-    closeForm() {
-      this.showForm = false;
-      this.resetForm();
-      this.warningMessage = '';
-    },
-    resetForm() {
-      this.formData = {
-        address: '',
-        contact: '',
-        inclusiveDates: '',
-        positionTitle: '',
-        department: '',
-        monthlySalary: '',
-        salaryGrade: '',
-        appointmentStatus: '',
-        govtService: ''
+  export default {
+    data() {
+      return {
+        workExperienceEntries: [],
+        formData: {
+          address: '',
+          contact: '',
+          inclusive_dates: '',
+          position_title: '',
+          department: '',
+          monthly_salary: '',
+          salary_grade: '',
+          appointment_status: '',
+          govt_service: 'No' // Default value
+        },
+        showForm: false,
+        isSubmitting: false,
+        warningMessage: ''
       };
     },
-    removeWork(index) {
-      this.workBackground.splice(index, 1);
+    async mounted() {
+      await this.loadWorkExperienceEntries();
     },
-    isFormValid() {
-      return Object.values(this.formData).every(field => field !== '');
+    computed: {
+      filteredWorkExperienceEntries() {
+        return this.workExperienceEntries;
+      }
+    },
+    methods: {
+      async loadWorkExperienceEntries() {
+        try {
+          const response = await axios.get('/work-experiences');
+          this.workExperienceEntries = response.data;
+        } catch (error) {
+          console.error('Error loading work experience entries:', error);
+        }
+      },
+      async submitForm() {
+        if (!this.formData.address || !this.formData.contact || !this.formData.inclusive_dates || !this.formData.position_title) {
+          this.warningMessage = 'Please fill in all required fields.';
+          return;
+        }
+
+        this.isSubmitting = true;
+        try {
+          await axios.post('/work-experiences', this.formData);
+          this.workExperienceEntries.push({ ...this.formData }); // Ensure form data is pushed correctly
+          this.closeForm();
+          this.warningMessage = '';
+        } catch (error) {
+          console.error('Error submitting work experience entry:', error);
+          this.warningMessage = error.response?.data?.message || 'Error submitting work experience entry. Please try again.';
+        } finally {
+          this.isSubmitting = false;
+        }
+      },
+      async removeEntry(index) {
+        if (!confirm('Are you sure you want to remove this entry?')) {
+          return;
+        }
+        const entryToRemove = this.workExperienceEntries[index];
+
+        try {
+          // Send DELETE request to backend
+          await axios.delete(`/work-experiences/${entryToRemove.id}`);
+
+          // Remove entry from local array if deletion is successful
+          this.workExperienceEntries.splice(index, 1);
+        } catch (error) {
+          console.error('Error removing work experience entry:', error);
+          alert('Failed to remove entry. Please try again.');
+        }
+      },
+      showOverlay() {
+        this.showForm = true;
+      },
+      closeForm() {
+        this.formData = {
+          address: '',
+          contact: '',
+          inclusive_dates: '',
+          position_title: '',
+          department: '',
+          monthly_salary: '',
+          salary_grade: '',
+          appointment_status: '',
+          govt_service: 'No' // Reset to default value
+        };
+        this.showForm = false;
+      }
     }
   }
-};
-</script>
+  </script>
 
-<style scoped>
-/* General Styles */
-.main-container {
-  margin-top: 3%;
-  margin-left: 190px;
-  display: flex;  
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 50px;
-}
+  <style scoped>
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px;
+    margin-top: 60px;
+  }
 
-.basic-form {
-  width: 100%;
-  max-width: 99%;
-  padding: 20px;
-  background-color: rgba(240, 240, 240, 0.8); 
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-  text-align: left;
-  margin-top: 40px;
-  position: relative;
-}
+  .degree-selection {
+    width: 90%;
+    max-width: 80%;
+    padding: 20px;
+    background-color: rgba(240, 240, 240, 0.8);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: left;
+    margin-left: 150px;
+  }
 
-/* Add Work Experience Button Styles */
-.add-work-button {
-  background-color: #187b0d;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 1em;
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
-  max-width: 500px;
-  margin-left: 26%;
-}
+  .title-section {
+    margin-bottom: 20px;
+  }
 
-.add-work-button:hover {
-  background-color: #145a09;
-}
+  .add-button {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100px;
+  }
 
-/* Form Popup Styles */
-.form-popup {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 96%;
-  margin-top: 20px; /* Space between the button and the form */
-}
+  .add-button:hover {
+    background-color: #218838;
+  }
 
-.form-popup h2 {
-  margin-top: 0;
-}
+  .form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
 
-/* Form Row Styles */
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px; /* Adjust gap between form groups */
-  margin-bottom: 15px;
-}
+  .form-popup {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
 
-.form-group {
-  flex: 1;
-  min-width: 200px; /* Ensures a minimum width for better alignment */
-}
+  h2 {
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
+  .work-experience-form {
+    display: flex;
+    flex-direction: column;
+  }
 
-input[type="text"],
-input[type="number"],
-select {
-  width: 75%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
+  .form-row {
+    display: flex;
+    margin-bottom: 20px;
+  }
 
-button {
-  background-color: #187b0d;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 1em;
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
-}
+  .form-group {
+    flex: 1;
+    margin-right: 15px;
+  }
 
-button:hover {
-  background-color: #145a09;
-}
+  .form-group:last-child {
+    margin-right: 0;
+  }
 
-/* Button Row Styles */
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-}
+  form input[type="text"],
+  form input[type="number"],
+  form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
 
-.button-row button {
-  width: 100px;
-}
+  .submit-button {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    margin-right: 10px;
+    width: 100px;
+  }
 
-/* Results Section */
-.results-section {
-  width: 100%;
-  max-width: 99%;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
-}
+  .submit-button:hover {
+    background-color: #218838;
+  }
 
-.submitted-message {
-  text-align: left;
-}
+  .close-button {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+    width: 100px;
+  }
 
-.work-background {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+  .close-button:hover {
+    background-color: #c82333;
+  }
 
-.work-entry {
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 10000px;
-  background-color: #f9f9f9;
-}
+  .warning-message {
+    color: #dc3545;
+    margin-top: 10px;
+  }
 
-.remove-button {
-  width: 100px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  font-size: 0.9em;
-  margin-top: 10px;
-}
+  .results-section {
+    width: 90%;
+    max-width: 80%;
+    margin-top: 20px;
+    margin-left: 110px;
+  }
 
-.remove-button:hover {
-  background-color: #c62828;
-}
+  .results-section table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-/* Warning Message Styles */
-.warning-message {
-  color: red;
-  padding: 10px;
-  margin-top: 10px;
-}
-</style>
+  .results-section th,
+  .results-section td {
+    padding: 10px;
+    text-align: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .results-section thead {
+    background-color: #187b0d;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+  }
+
+  .results-section tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .results-section tbody tr:hover {
+    background-color: #e9f5e9;
+  }
+
+  .remove-button {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+  }
+
+  .remove-button:hover {
+    background-color: #c82333;
+  }
+  </style>

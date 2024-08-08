@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
-    protected $table = 'address_info';
+    use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'address_type',
         'country',
         'province',
         'city',
         'barangay',
         'house_number',
-        'zip_code',
-        'temp_country',
-        'temp_province',
-        'temp_city',
-        'temp_barangay',
-        'temp_house_number',
-        'temp_zip_code'
+        'zip_code'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(Student::class, 'user_id', 'username');
+    }
 }

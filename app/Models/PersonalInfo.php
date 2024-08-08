@@ -7,30 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 class PersonalInfo extends Model
 {
     protected $table = 'personal_info';
-
     protected $fillable = [
-        
+        'username',
         'surname',
         'firstname',
         'middlename',
         'extname',
         'dob',
-        'placeOfBirth',
+        'place_of_birth',
         'sex',
         'citizenship',
-        'dualType',
-        'dualCountry',
+        'dual_type',
+        'dual_country',
         'height',
         'weight',
-        'bloodType',
-        'civilStatus',
-        'email',
-        'stud_Id'
+        'blood_type',
+        'civil_status',
+        'email'
     ];
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'stud_Id', 'username');
+        return $this->belongsTo(Student::class, 'username', 'username');
     }
 }
-    

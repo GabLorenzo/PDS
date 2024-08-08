@@ -1,373 +1,406 @@
-<template>
-  <div class="main-container">
-    <!-- Basic Form -->
-    <div class="basic-form">
-      <h2>Family Information</h2>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="selectRelation">Select Relationship:</label>
-          <select id="selectRelation" v-model="selectedRelation" @change="updateRelation" required>
-            <option value="">--Select Relationship--</option>
-            <option value="Parent">Parent</option>
-            <option value="Spouse">Spouse</option>
-            <option value="Child">Child</option>
-          </select>
+    <template>
+        <div class="main-container">
+        <!-- Basic Form -->
+        <div class="basic-form">
+            <h2>Family Information</h2>
+            <div class="form-row">
+            <div class="form-group">
+                <label for="selectRelation">Select Relation:</label>
+                <select id="selectRelation" v-model="selectedRelation" @change="updateRelation">
+                <option value="">--Select Relation--</option>
+                <option v-for="relation in availableRelations" :key="relation" :value="relation">
+                    {{ relation }}
+                </option>
+                </select>
+            </div>
+            </div>
+
+            <!-- Buttons inside basic-form -->
+            <!-- <div class="button-row">
+            <router-link to="/address">
+                <button class="nav-button">Previous</button>
+            </router-link>
+            <router-link to="/education">
+                <button class="nav-button">Next</button>
+            </router-link>
+            </div> -->
         </div>
-      </div>
 
-      <!-- Buttons inside basic-form -->
-      <div class="button-row">
-        <router-link to="/address">
-          <button>Previous</button>
-        </router-link>
-        <router-link to="/education">
-          <button>Next</button>
-        </router-link>
-      </div>
-    </div>
+        <!-- Form Overlay -->
+        <div v-if="showForm" class="form-overlay">
+            <div class="form-popup">
+            <h2>Family Information</h2>
+            <form @submit.prevent="submitForm">
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="relation">Relation:</label>
+                    <select id="relation" v-model="formData.relation" disabled>
+                    <option value="">--Select Relation--</option>
+                    <option v-for="relation in availableRelations" :key="relation" :value="relation">
+                        {{ relation }}
+                    </option>
+                    </select>
+                </div>
 
-    <!-- Form Overlay -->
-    <div v-if="showForm" class="form-overlay">
-      <div class="form-popup">
-        <h2>Family Information</h2>
-        <form @submit.prevent="submitForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="relation">Relation:</label>
-              <select v-if="isAddingAnother" id="relation" v-model="formData.relation" required>
-                <option value="">--Select Relationship--</option>
-                <option value="Parent">Parent</option>
-                <option value="Spouse">Spouse</option>
-                <option value="Child">Child</option>
-              </select>
-              <input v-else type="text" id="relation" v-model="formData.relation" disabled>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" v-model="formData.name">
+                </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" v-model="formData.age">
+                </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="occupation">Occupation:</label>
+                    <input type="text" id="occupation" v-model="formData.occupation">
+                </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="contactNumber">Contact Number:</label>
+                    <input type="text" id="contactNumber" v-model="formData.contactNumber">
+                </div>
+                </div>
+
+                <p v-if="warningMessage" class="warning-message">{{ warningMessage }}</p>
+                <button type="submit" class="submit-button" :disabled="isSubmitting">Add</button>
+                <button type="button" class="close-button" @click="closeForm">Close</button>
+            </form>
             </div>
-
-            <div v-if="formData.relation === 'Parent'" class="form-group">
-              <label for="parentType">Parent Type:</label>
-              <select id="parentType" v-model="formData.parentType" required>
-                <option value="">Select Relationship</option>
-                <option value="Mother">Mother</option>
-                <option value="Father">Father</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="name">Name:</label>
-              <input type="text" id="name" v-model="formData.name" required>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="age">Age:</label>
-              <input type="number" id="age" v-model="formData.age" required>
-            </div>
-
-            <div class="form-group">
-              <label for="occupation">Occupation:</label>
-              <input type="text" id="occupation" v-model="formData.occupation" required>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="contactNumber">Contact Number:</label>
-              <input type="tel" id="contactNumber" v-model="formData.contactNumber" required>
-            </div>
-          </div>
-
-          <button type="submit">Submit</button>
-          <button type="button" @click="closeForm">Close</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Results Display -->
-    <div v-if="familyMembers.length > 0" class="results-section">
-      <div class="submitted-message">
-        <!-- <p>Form submitted successfully!</p> -->
-        <div class="family-members">
-          <div v-for="(member, index) in familyMembers" :key="index" class="family-member">
-            <p>Relation: {{ member.relation }}</p>
-            <p v-if="member.relation === 'Parent'">Parent Type: {{ member.parentType }}</p>
-            <p>Name: {{ member.name }}</p>
-            <p>Age: {{ member.age }}</p>
-            <p>Occupation: {{ member.occupation }}</p>
-            <p>Contact Number: {{ member.contactNumber }}</p>
-            <button class="remove-button" @click="removeMember(index)">Remove</button>
-          </div>
         </div>
-        <button class="add-another-button" @click="addAnotherMember">Add Another Member</button>
-      </div>
-    </div>
-  </div>
-</template>
 
-<script>
-export default {
-  data() {
-    return {
-      selectedRelation: '',
-      formData: {
-        relation: '',
-        parentType: '',  
-        name: '',
-        age: '',
-        occupation: '',
-        contactNumber: ''
-      },
-      showForm: false,
-      isAddingAnother: false,
-      familyMembers: []
+        <!-- Results Display -->
+        <div v-if="familyMembers.length" class="result-container">
+            <table class="result-table">
+            <thead>
+                <tr>
+                <th>Relation</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Occupation</th>
+                <th>Contact Number</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(member, index) in filteredFamilyMembers" :key="index" class="result-row">
+                <td>{{ member.relation }}</td>
+                <td>{{ member.name }}</td>
+                <td>{{ member.age }}</td>
+                <td>{{ member.occupation }}</td>
+                <td>{{ member.contactNumber }}</td>
+                <td><button @click="removeMember(index, member.id)" class="remove-button">Remove</button></td>
+                </tr>
+            </tbody>
+            </table>
+            <button class="submit-button" @click="submitToDatabase" :disabled="isSubmitting">Submit</button>
+        </div>
+        </div>
+    </template>
+
+    <script>
+    import axios from 'axios';
+
+    export default {
+        data() {
+        return {
+            familyMembers: [],
+            selectedRelation: '',
+            formData: {
+            relation: '',
+            name: '',
+            age: '',
+            occupation: '',
+            contactNumber: '',
+            user_id: '' // Add user_id here
+            },
+            showForm: false,
+            isSubmitting: false,
+            warningMessage: '',
+            availableRelations: ['Father', 'Mother', 'Sibling', 'Spouse', 'Child']
+        };
+        },
+        created() {
+        this.fetchFamilyMembers();
+        this.fetchUserId(); // Fetch user ID on component creation
+        },
+        methods: {
+        async fetchFamilyMembers() {
+            try {
+            const response = await axios.get('/family');
+            this.familyMembers = Array.isArray(response.data) ? response.data : [];
+            } catch (error) {
+            console.error('Error fetching family members:', error);
+            this.familyMembers = []; // Default to empty array on error
+            }
+        },
+        async fetchUserId() {
+            try {
+            const response = await axios.get('/user');
+            this.formData.user_id = response.data.user.username; // Assuming user ID is in username
+            } catch (error) {
+            console.error('Error fetching user ID:', error);
+            this.warningMessage = 'Unable to retrieve user ID.';
+            }
+        },
+        updateRelation() {
+            if (this.selectedRelation) {
+            this.formData.relation = this.selectedRelation;
+            this.showForm = true;
+            } else {
+            this.showForm = false;
+            }
+        },
+        async submitForm() {
+            if (!this.formData.relation || !this.formData.name) {
+            this.warningMessage = 'Please fill in all required fields.';
+            return;
+            }
+
+            this.isSubmitting = true;
+            try {
+            const formDataWithUserId = { ...this.formData, user_id: this.formData.user_id };
+            const response = await axios.post('/family', formDataWithUserId);
+
+            this.familyMembers.push(response.data);
+            this.closeForm();
+            this.warningMessage = '';
+            } catch (error) {
+            console.error('Error submitting family member:', error);
+            this.warningMessage = error.response ? (error.response.data.message || 'Error submitting family member. Please try again.') : 'Error submitting family member. Please try again.';
+            } finally {
+            this.isSubmitting = false;
+            }
+        },
+        async submitToDatabase() {
+            if (this.familyMembers.length === 0) {
+            this.warningMessage = 'No family members to submit';
+            return;
+            }
+
+            this.isSubmitting = true;
+            try {
+            await axios.post('/family/bulk', { familyMembers: this.familyMembers });
+            alert('Family members submitted successfully!');
+            this.warningMessage = '';
+            } catch (error) {
+            console.error('Error submitting family members:', error);
+            alert('Error submitting family members. Please try again.');
+            this.warningMessage = 'Error submitting family members. Please try again.';
+            } finally {
+            this.isSubmitting = false;
+            }
+        },
+        closeForm() {
+            this.formData = {
+            relation: '',
+            name: '',
+            age: '',
+            occupation: '',
+            contactNumber: ''
+            };
+            this.selectedRelation = '';
+            this.showForm = false;
+        },
+        async removeMember(index, id) {
+            if (!confirm('Are you sure you want to remove this member?')) {
+            return;
+            }
+
+            try {
+            await axios.delete(`/family/${id}`);
+            this.familyMembers.splice(index, 1);
+            } catch (error) {
+            console.error('Error removing family member:', error);
+            alert('Error removing family member. Please try again.');
+            }
+        }
+        },
+        computed: {
+        filteredFamilyMembers() {
+            return this.familyMembers.filter(member =>
+            member.relation || member.name || member.age || member.occupation || member.contactNumber
+            );
+        }
+        }
     };
-  },
-  methods: {
-    updateRelation() {
-      this.formData.relation = this.selectedRelation;
-      this.showForm = !!this.selectedRelation;  // Show the form if a relationship is selected
-    },
-    submitForm() {
-      // Ensure the formData.relation is set correctly
-      if (this.isAddingAnother && !this.formData.relation) {
-        alert('Please select a relation.');
-        return;
-      }
+    </script>
 
-      if (this.formData.relation === 'Parent' && !this.formData.parentType) {
-        alert('Please select if the parent is a Mother or Father.');
-        return;
-      }
-
-      this.familyMembers.push({ ...this.formData });
-      console.log('Form submitted:', this.formData);
-      this.showForm = false;  // Hide the form overlay
-      if (!this.isAddingAnother) {
-        this.resetForm();
-      }
-    },
-    closeForm() {
-      this.showForm = false;
-      this.resetForm();
-    },
-    resetForm() {
-      this.formData = {
-        relation: '',
-        parentType: '',  // Reset this field
-        name: '',
-        age: '',
-        occupation: '',
-        contactNumber: ''
-      };
-      this.selectedRelation = '';
-      this.isAddingAnother = false;
-    },
-    addAnotherMember() {
-      this.isAddingAnother = true;
-      this.resetForm();
-      this.showForm = true;  // Show the form overlay
-    },
-    removeMember(index) {
-      this.familyMembers.splice(index, 1);
+    <style scoped>
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
     }
-  }
-};
-</script>
 
-<style scoped>
-.main-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
+    .basic-form {
+        width: 100%;
+        max-width: 85%;
+        padding: 20px;
+        background-color: rgba(240, 240, 240, 0.8);
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-align: left;
+        margin-top: 5%;
+        margin-left: 220px;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        flex: 1;
+        margin-right: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .submit-button,
+    .close-button,
+    .nav-button,
+    .remove-button {
+        width: 100px;
+    }
+
+    .submit-button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-left:90px;
+        margin-top: 10px;
+    }
+
+    .nav-button {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .remove-button {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .close-button {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .form-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-popup {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .result-container {
+        width: 100%;
+        max-width: 85%;
+        margin: 20px 0;
+    }
+
+    .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-left: 90px;
 }
 
-.basic-form {
-  width: 100%;
-  max-width: 85%;
-  margin-left: 220px;
-  margin-top: 5%;
-  padding: 20px;
-  background-color: rgba(240, 240, 240, 0.8);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-  text-align: left;
-  position: relative;
+.result-table th,
+.result-table td {
+    border: none; /* Remove vertical lines */
+    padding: 8px;
+    text-align: left;
 }
 
-.form-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.result-table th {
+    background-color: #187b0d;
+    color: white;
 }
 
-.form-group {
-  flex: 1;
-  margin-right: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="tel"],
-select {
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-button {
-  background-color: #187b0d;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 1em;
-  width: 100px;
-  box-sizing: border-box;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #145a09;
-}
-
-.form-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.form-popup {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 600px;
-}
-
-.results-section {
-  width: 100%;
-  max-width: 85%;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
-  margin-left: 220px;
-}
-
-.submitted-message {
-  text-align: left;
-}
-
-.family-members {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.family-member {
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 90%;
-  background-color: rgba(240, 240, 240, 0.8);
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.button-row{
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.add-another-button {
-  background-color: #187b0d;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 1em;
-  width: 200px;
-  box-sizing: border-box;
-  margin-top: 10px;
-}
-
-.add-another-button:hover {
-  background-color: #145a09;
+.result-row:nth-child(even) {
+    background-color: #f2f2f2;
 }
 
 .remove-button {
-  background-color: #d9534f;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  font-size: 0.9em;
-  width: 100px;
-  box-sizing: border-box;
-  margin-top: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
 }
-
-.remove-button:hover {
-  background-color: #c9302c;
-}
-
-@media (max-width: 600px) {
-  .basic-form {
-    max-width: 100%;
-    margin-bottom: 20px;
-  }
-
-  .form-popup {
-    width: 90%;
-  }
-
-  .family-members {
-    flex-direction: column;
-  }
-
-  .family-member {
-    width: 90%;
-  }
-
-  .button-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .add-another-button {
-    width: 100%;
-  }
-}
-</style>
+    </style>
